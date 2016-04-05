@@ -1,0 +1,12 @@
+# notes for project
+
+# installed packages in R
+# src: https://www.credera.com/blog/business-intelligence/twitter-analytics-using-r-part-1-extract-tweets/
+install.packages("twitteR")
+
+#Fixed X11 error
+ln -s /usr/X11 /opt/X11
+
+install.packages("ROAuth")
+library("twitteR")
+library("ROAuth")
