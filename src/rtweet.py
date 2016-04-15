@@ -22,6 +22,7 @@
 # SOFTWARE.
 
 import sys
+import requests, json, urllib, urllib2, base64
 
 def read(filename):
     searchList = []
@@ -36,9 +37,41 @@ def read(filename):
 
 def main(searchList):
     # Get credentials for Twitter
-    cerdentials = get_credentials()
+    api_keys = get_credentials()
+    auth = oauth (api_keys)
     
     return
+
+def oauth(api_keys):
+    try:
+        # Encode credentials
+        encoded_credentials = base64.b64encode(api_keys['twitter_consumer_key'] + ':' + api_keys['twitter_consumer_secret'])        
+        # Prepare URL and HTTP parameters
+        post_url = "https://api.twitter.com/oauth2/token"
+        parameters = {'grant_type' : 'client_credentials'}
+        # Prepare headers
+        auth_headers = {
+            "Authorization" : "Basic %s" % encoded_credentials,
+            "Content-Type"  : "application/x-www-form-urlencoded;charset=UTF-8"
+            }
+
+        # Make a POST call
+        results = requests.post(url=post_url, data=urllib.urlencode(parameters), headers=auth_headers)
+        response = results.json()
+
+        # Store the access_token and token_type for further use
+        auth = {}
+        auth['access_token'] = response['access_token']
+        auth['token_type']   = response['token_type']
+
+        print("rtweet.py: Twitter OAuth test = PASS")
+        return auth
+
+    except Exception as e:
+        print("rtweet.py: Twitter OAuth test = FAIL", e)
+        print("Twitter consumer key:", api_keys['twitter_consumer_key'])
+        print("Twitter consumer secret:", api_keys['twitter_consumer_secret'])
+        sys.exit()
 
 def get_credentials():
     api_keys = {}
@@ -46,34 +79,29 @@ def get_credentials():
     api_keys['twitter_consumer_secret'] = ''
 
     try:
-        import credential
-        if credentials.twitter_consumer_key == '' or credentials.twitter_consumer_key == 'TWITTER_CONSUMER_KEY' :
-            raise ImportError
-        elif credentials.twitter_consumer_key == '' or credentials.twitter_consumer_key == 'TWITTER_CONSUMER_SECRET' :
-            raise ImportError
-        else:
-            api_keys['twitter_consumer_key']    = credentials.twitter_consumer_key
-            api_keys['twitter_consumer_secret'] = credentials.twitter_consumer_secret
+        import credentials
+        api_keys['twitter_consumer_key']    = credentials.twitter_consumer_key
+        api_keys['twitter_consumer_secret'] = credentials.twitter_consumer_secret
     except ImportError:
-        print "twitterRest.py: ALERT: No credentials.py found"
+        print("rtweet.py: ALERT: No credentials.py found")
         api_keys['twitter_consumer_key']    = raw_input("Enter your Twitter API consumer key: ")
         api_keys['twitter_consumer_secret'] = raw_input("Enter your Twitter API consumer secret: ")
     except:
-        print ("twitterRest.py: ERROR: unable to import credentials - unknown reason")
+        print("rtweet.py: ERROR: unable to import credentials - unknown reason")
 
-    return
+    return api_keys
 
 # command line arguments are read from here.
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        print("twitterRest.py: Reading alternate input file")
+        print("rtweet.py: Reading alternate input file")
         read(sys.argv[1])
     
     elif len (sys.argv) == 1 :
-        print("twitterRest.py: Reading default input file")
+        print("rtweet.py: Reading default input file")
         read('searchMe.txt')
 
     else:
-        print("twitterRest.py: ERROR: cannot accept multiple files")
+        print("rtweet.py: ERROR: cannot accept multiple files")
         sys.exit()
 
