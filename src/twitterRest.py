@@ -30,19 +30,43 @@ def read(filename):
             searchList.append(line.rstrip())
 
     print (searchList)
+    main (searchList)
+    
+    return
 
+def main(searchList):
+    # Get credentials for Twitter
+    cerdentials = get_credentials()
+    
+    return
+
+def get_credentials()
+    api_keys = {}
+    api_keys['twitter_consumer_key']    = ''
+    api_keys['twitter_consumer_secret'] = ''
+
+    try:
+        import credentials
+        api_keys['twitter_consumer_key']    = credentials.twitter_consumer_key
+        api_keys['twitter_consumer_secret'] = credentials.twitter_consumer_secret
+    except:
+        print "twitterRest.py: No credentials.py found"
+        api_keys['twitter_consumer_key']    = raw_input("Enter your Twitter API consumer key: ")
+        api_keys['twitter_consumer_secret'] = raw_input("Enter your Twitter API consumer secret: ")
+
+    return
 
 # command line arguments are read from here.
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        print("Reading alternate input file")
+        print("twitterRest.py: Reading alternate input file")
         read(sys.argv[1])
     
     elif len (sys.argv) == 1 :
-        print("Reading default input file")
+        print("twitterRest.py: Reading default input file")
         read('searchMe.txt')
 
     else:
-        print("ERROR: cannot accept multiple files")
+        print("twitterRest.py: ERROR: cannot accept multiple files")
         sys.exit()
 
