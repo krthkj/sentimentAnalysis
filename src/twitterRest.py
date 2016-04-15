@@ -21,12 +21,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+def read(filename):
+    searchList = []
+    with open (filename) as f:
+        for line in f:
+            searchList.append(line)
 
 
-
+# command line arguments are read from here.
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         print("Reading alternate input file")
+        read(sys.argv[1])
     
     else if len (sys.argv) > 1 :
         print("ERROR: cannot accept multiple files")
@@ -34,5 +40,5 @@ if __name__ == "__main__":
 
     else:
         print("Reading default input file")
-        read(sys.argv[1])
+        read('searchMe.txt')
 
