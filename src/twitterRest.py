@@ -40,19 +40,26 @@ def main(searchList):
     
     return
 
-def get_credentials()
+def get_credentials():
     api_keys = {}
     api_keys['twitter_consumer_key']    = ''
     api_keys['twitter_consumer_secret'] = ''
 
     try:
-        import credentials
-        api_keys['twitter_consumer_key']    = credentials.twitter_consumer_key
-        api_keys['twitter_consumer_secret'] = credentials.twitter_consumer_secret
-    except:
-        print "twitterRest.py: No credentials.py found"
+        import credential
+        if credentials.twitter_consumer_key == '' or credentials.twitter_consumer_key == 'TWITTER_CONSUMER_KEY' :
+            raise ImportError
+        elif credentials.twitter_consumer_key == '' or credentials.twitter_consumer_key == 'TWITTER_CONSUMER_SECRET' :
+            raise ImportError
+        else:
+            api_keys['twitter_consumer_key']    = credentials.twitter_consumer_key
+            api_keys['twitter_consumer_secret'] = credentials.twitter_consumer_secret
+    except ImportError:
+        print "twitterRest.py: ALERT: No credentials.py found"
         api_keys['twitter_consumer_key']    = raw_input("Enter your Twitter API consumer key: ")
         api_keys['twitter_consumer_secret'] = raw_input("Enter your Twitter API consumer secret: ")
+    except:
+        print ("twitterRest.py: ERROR: unable to import credentials - unknown reason")
 
     return
 
