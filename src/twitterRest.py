@@ -21,24 +21,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import sys
+
 def read(filename):
     searchList = []
     with open (filename) as f:
         for line in f:
-            searchList.append(line)
+            searchList.append(line.rstrip())
+
+    print (searchList)
 
 
 # command line arguments are read from here.
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 2:
         print("Reading alternate input file")
         read(sys.argv[1])
     
-    else if len (sys.argv) > 1 :
-        print("ERROR: cannot accept multiple files")
-        sys.exit()
-
-    else:
+    elif len (sys.argv) == 1 :
         print("Reading default input file")
         read('searchMe.txt')
+
+    else:
+        print("ERROR: cannot accept multiple files")
+        sys.exit()
 
