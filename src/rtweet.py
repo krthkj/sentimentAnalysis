@@ -37,17 +37,19 @@ def file_array(filename):
 def main(filename):
 
     # read array
-    searchList = file_array (filename)
+    search_term = file_array (filename)
 
     # Get credentials for Twitter
     api_keys = get_credentials()
     auth = oauth (api_keys)
     
+    # TODO - Need to run multiple threads to fetch data for multiple search strings
     # Pull Tweets down from the Twitter API
-    raw_tweet = search(search_term, num_tweets, auth)
+    raw_tweet = search(search_term[0], num_tweets, auth)
     unique_tweet = dedup (raw_tweet)
 
     store(unique_tweet)
+    # TODO - finish the threads here
     return
 
 def oauth(api_keys):
