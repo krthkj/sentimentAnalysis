@@ -23,16 +23,6 @@
 
 import sys
 import requests, json, urllib, urllib2, base64
-import random
-
-def get_state():
-    # insert random state
-    state_list = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming']
-    return random.choice(state_list)
-
-def get_age():
-    # insert random age
-    return random.randint(18,60)
 
 def file_array(filename):
     # read file to array
@@ -47,17 +37,19 @@ def file_array(filename):
 def main(filename):
 
     # read array
-    searchList = file_array (filename)
+    search_term = file_array (filename)
 
     # Get credentials for Twitter
     api_keys = get_credentials()
     auth = oauth (api_keys)
     
+    # TODO - Need to run multiple threads to fetch data for multiple search strings
     # Pull Tweets down from the Twitter API
-    raw_tweet = search(search_term, num_tweets, auth)
+    raw_tweet = search(search_term[0], num_tweets, auth)
     unique_tweet = dedup (raw_tweet)
 
     store(unique_tweet)
+    # TODO - finish the threads here
     return
 
 def oauth(api_keys):
