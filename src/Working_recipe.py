@@ -1,19 +1,5 @@
 #!/usr/bin/env python
 
-#   Copyright 2015 AlchemyAI
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
-
 import os, sys, string, time, re
 import requests, json, urllib, urllib2, base64
 import pymongo
@@ -49,9 +35,6 @@ def main(search_term, num_tweets):
 
     # Store data in MongoDB
     store(enriched_tweets)
-
-    # Print some interesting results to the screen
-    print_results()
 
     return
 
@@ -168,20 +151,10 @@ def search(search_term, num_tweets, auth):
             if text[:3] == 'RT ':
                 continue
 
-            tweet = {}
             # Configure the fields you are interested in from the status object
-#            tweet['text']        = text
-#            tweet['id']          = status['id']
-#            tweet['time']        = status['created_at'].encode('utf-8')
-#            tweet['screen_name'] = status['user']['screen_name'].encode('utf-8')
-#            tweet['age'] = get_age()
             status['age'] = get_age()
-#            tweet['location'] = get_state()
             status['location'] = get_state()
             status['search_term'] = search_term
-            print "Adding value- State:", status['location']
-            print "Adding value- Age:", status['age']
-           #collection    += [tweet]
             collection += [status]
 
             if len(collection) >= num_tweets:
@@ -287,63 +260,6 @@ def store(tweets):
 
     return
 
-def print_results():
-
-    print ''
-    print ''
-    print '###############'
-    print '#    Stats    #'
-    print '###############'
-    print ''
-    print ''    
-    
-    db = pymongo.MongoClient().twitter_db
-    tweets = db.tweets
-
-    num_positive_tweets = tweets.find({"sentiment" : "positive"}).count()
-    num_negative_tweets = tweets.find({"sentiment" : "negative"}).count()
-    num_neutral_tweets = tweets.find({"sentiment" : "neutral"}).count()
-    num_tweets = tweets.find().count()
-
-    if num_tweets != sum((num_positive_tweets, num_negative_tweets, num_neutral_tweets)):
-        print "Counting problem!"
-        print "Number of tweets (%d) doesn't add up (%d, %d, %d)" % (num_tweets, 
-                                                                     num_positive_tweets, 
-                                                                     num_negative_tweets, 
-                                                                     num_neutral_tweets)
-        sys.exit()
-
-    most_positive_tweet = tweets.find_one({"sentiment" : "positive"}, sort=[("score", -1)])
-    most_negative_tweet = tweets.find_one({"sentiment" : "negative"}, sort=[("score", 1)])
-
-    mean_results = tweets.aggregate([{"$group" : {"_id": "$sentiment", "avgScore" : { "$avg" : "$score"}}}])
-
-    avg_pos_score = mean_results['result'][2]['avgScore'] 
-    avg_neg_score = mean_results['result'][1]['avgScore'] 
-    
-    print "SENTIMENT BREAKDOWN"
-    print "Number (%%) of positive tweets: %d (%.2f%%)" % (num_positive_tweets, 100*float(num_positive_tweets) / num_tweets)
-    print "Number (%%) of negative tweets: %d (%.2f%%)" % (num_negative_tweets, 100*float(num_negative_tweets) / num_tweets)
-    print "Number (%%) of neutral tweets: %d (%.2f%%)" % (num_neutral_tweets, 100*float(num_neutral_tweets) / num_tweets)
-    print ""
-
-    print "AVERAGE POSITIVE TWEET SCORE: %f" % float(avg_pos_score)
-    print "AVERAGE NEGATIVE TWEET SCORE: %f" % float(avg_neg_score)
-    print ""
-
-    print "MOST POSITIVE TWEET"
-    print "Text: %s" % most_positive_tweet['text']
-    print "User: %s" % most_positive_tweet['screen_name']
-    print "Time: %s" % most_positive_tweet['time']
-    print "Score: %f" % float(most_positive_tweet['score'])
-    print ""
-
-    print "MOST NEGATIVE TWEET"
-    print "Text: %s" % most_negative_tweet['text']
-    print "User: %s" % most_negative_tweet['screen_name']
-    print "Time: %s" % most_negative_tweet['time']
-    print "Score: %f" % float(most_negative_tweet['score'])
-    return
 
 if __name__ == "__main__":
 
