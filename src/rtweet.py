@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import sys
+import os, sys, string, time, re
 import requests, json, urllib, urllib2, base64
 
 def file_array(filename):
@@ -34,10 +34,11 @@ def file_array(filename):
     # print (array)
     return array
 
-def main(filename):
+#def main(filename):
+def main(search_text, num_tweets):
 
     # read array
-    search_term = file_array (filename)
+#    search_term = file_array (filename)
 
     # Get credentials for Twitter
     api_keys = get_credentials()
@@ -45,7 +46,8 @@ def main(filename):
     
     # TODO - Need to run multiple threads to fetch data for multiple search strings
     # Pull Tweets down from the Twitter API
-    raw_tweet = search(search_term[0], num_tweets, auth)
+#    raw_tweet = search(search_term[0], num_tweets, auth)
+    raw_tweet = search(search_text, num_tweets, auth)
     unique_tweet = dedup (raw_tweet)
 
     store(unique_tweet)
@@ -152,9 +154,9 @@ def search(search_term, num_tweets, auth):
         if 'next_results' in response['search_metadata']:
             next_results = response['search_metadata']['next_results']
         else:
-            print "Uh-oh! Twitter has dried up. Only collected %d Tweets (requested %d)" % (len(collection), num_tweets)
-            print "Last successful Twitter API call: %s" % get_url
-            print "HTTP Status:", results.status_code, results.reason
+            print ("Uh-oh! Twitter has dried up. Only collected %d Tweets (requested %s)" % (len(collection), num_tweets))
+            print ("Last successful Twitter API call: %s" % get_url)
+            print ("HTTP Status:", results.status_code, results.reason)
             return collection
 
 
@@ -175,20 +177,28 @@ def get_credentials():
     except:
         print("rtweet.py: ERROR: unable to import credentials - unknown reason")
 
+    print( "Using the following credentials:")
+    print( "\tTwitter consumer key:", api_keys['twitter_consumer_key'] )
+    print ("\tTwitter consumer secret:", api_keys['twitter_consumer_secret'] )
+
     return api_keys
 
 # command line arguments are read from here.
 if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        print("rtweet.py: Reading alternate input file")
-        main(sys.argv[1])
+#    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
+#        print("rtweet.py: Reading alternate input file")
+        print("rtweet.py: Reading file")
+#        main(sys.argv[1])
+        main(sys.argv[1], sys.argv[2])
     
-    elif len (sys.argv) == 1 :
-        print("rtweet.py: Reading default input file")
-        main('searchMe.txt')
+#    elif len (sys.argv) == 1 :
+#        print("rtweet.py: Reading default input file")
+#        main('searchMe.txt')
 
     else:
-        print("SYNTAX: python rtweet.py <SEARCH_FILE>")
+#        print("SYNTAX: python rtweet.py <SEARCH_FILE>")
+        print("SYNTAX: python rtweet.py <SEARCH_TEXT> <number_of_tweets>")
         print("\t<SEARCH_FILE> : the file which contains the list of string to be used when searching for Tweets")
         sys.exit()
 
