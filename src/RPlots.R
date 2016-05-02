@@ -35,8 +35,9 @@ slices <- c(nrow(subset(subset(mydata,search_term=="hillary"),score>0)),nrow(sub
 lbls   <- c("Yes","No","Neutral")
 pct <- round(slices/sum(slices)*100)
 lbls2 <- paste(lbls, " ", pct, "%", sep="")
+png(file = "HIllary_chart.png")
 pie(slices, labels=lbls2, col=rainbow(length(lbls2)),main="Sentiment Analysis for Hillary")
-jpeg(file = "HIllary_chart.jpg")
+dev.off()
 
 
 par(mfrow=c(1,1))
@@ -44,18 +45,16 @@ slices <- c(nrow(subset(subset(mydata,search_term=="trump"),score>0)),nrow(subse
 lbls   <- c("Yes","No","Neutral")
 pct <- round(slices/sum(slices)*100)
 lbls2 <- paste(lbls, " ", pct, "%", sep="")
+png(file = "trump_chart.png")
 pie(slices, labels=lbls2, col=rainbow(length(lbls2)),main="Sentiment Analysis for Trump")
-png(file = "trump_chart.jpg")
+dev.off()
 
 par(mfrow=c(1,1))
 slices <- c(nrow(subset(subset(mydata,search_term=="bernie"),score>0)),nrow(subset(subset(mydata,search_term=="bernie"),score<0)),nrow(subset(subset(mydata,search_term=="bernie"),score==0)) )
 lbls   <- c("Yes","No","Neutral")
 pct <- round(slices/sum(slices)*100)
 lbls2 <- paste(lbls, " ", pct, "%", sep="")
-pie(slices, labels=lbls2, col=rainbow(length(lbls2)),main="Sentiment Analysis for Bernie Sanders")
 png(file = "bernie_chart.png")
-
-
-
-
+pie(slices, labels=lbls2, col=rainbow(length(lbls2)),main="Sentiment Analysis for Bernie Sanders")
+dev.off()
 
