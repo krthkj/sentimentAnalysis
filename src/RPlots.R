@@ -1,3 +1,4 @@
+library('plotrix')
 library('ggplot2')
 mydata <- read.csv(file = "processedData.csv",header = TRUE, sep = ',')
 
@@ -26,3 +27,35 @@ qplot(data = mydata, score, geom='density', facets = .~search_term, fill=search_
 ggsave (filename = "Twitter_SentimentScore_Based.png")
 
 #qplot(data = mydata, location, geom='density',facets = .~search_term, color=search_term)
+#qplot(data = mydata, score ,facets = .~search_term,bins=30) + geom_bar()
+
+
+par(mfrow=c(1,1))
+slices <- c(nrow(subset(subset(mydata,search_term=="hillary"),score>0)),nrow(subset(subset(mydata,search_term=="hillary"),score<0)),nrow(subset(subset(mydata,search_term=="hillary"),score==0)) )
+lbls   <- c("Yes","No","Neutral")
+pct <- round(slices/sum(slices)*100)
+lbls2 <- paste(lbls, " ", pct, "%", sep="")
+pie(slices, labels=lbls2, col=rainbow(length(lbls2)),main="Sentiment Analysis for Hillary")
+jpeg(file = "HIllary_chart.jpg")
+
+
+par(mfrow=c(1,1))
+slices <- c(nrow(subset(subset(mydata,search_term=="trump"),score>0)),nrow(subset(subset(mydata,search_term=="trump"),score<0)),nrow(subset(subset(mydata,search_term=="trump"),score==0)) )
+lbls   <- c("Yes","No","Neutral")
+pct <- round(slices/sum(slices)*100)
+lbls2 <- paste(lbls, " ", pct, "%", sep="")
+pie(slices, labels=lbls2, col=rainbow(length(lbls2)),main="Sentiment Analysis for Trump")
+png(file = "trump_chart.jpg")
+
+par(mfrow=c(1,1))
+slices <- c(nrow(subset(subset(mydata,search_term=="bernie"),score>0)),nrow(subset(subset(mydata,search_term=="bernie"),score<0)),nrow(subset(subset(mydata,search_term=="bernie"),score==0)) )
+lbls   <- c("Yes","No","Neutral")
+pct <- round(slices/sum(slices)*100)
+lbls2 <- paste(lbls, " ", pct, "%", sep="")
+pie(slices, labels=lbls2, col=rainbow(length(lbls2)),main="Sentiment Analysis for Bernie Sanders")
+png(file = "bernie_chart.png")
+
+
+
+
+
